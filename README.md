@@ -875,7 +875,7 @@ Customer Portal                                      Admin Portal
   "status": "Active",
   "role": "user",
   "account_number": 5319779851,
-  "email": "juttumadhu21@gmail.com",
+  "email": "user@example.com",
   "email_verified": true,
   "transaction_pin_hash": "$2b$12$... or SHA256 hex string",
   "security_question": "What is your primary school name?",
@@ -1090,7 +1090,7 @@ Built on Streamlit with a clean custom emerald styling system (`frontend/styles.
 
 ## 56. Complete Admin Journey
 
-1. **Admin Login** $\rightarrow$ Enters admin email (`juttumadhu21@gmail.com`) and password $\rightarrow$ Verifies Admin OTP.
+1. **Admin Login** $\rightarrow$ Enters admin email (`admin@example.com` or `admin`) and password $\rightarrow$ Verifies Admin OTP.
 2. **Inspect System** $\rightarrow$ Views total deposits and platform KPI metrics on Admin Dashboard.
 3. **Audit Ledger** $\rightarrow$ Reviews global customer transfers and deposits.
 4. **Moderate Account** $\rightarrow$ Freezes suspicious customer account from Accounts tab.
