@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Madhu Bank — Educational Banking Simulation System
 
 ---
@@ -1375,3 +1376,6 @@ Example: Adding a "Savings Goal Tracker":
 
 **Madhu Bank** demonstrates how modern web frameworks, NoSQL databases, and robust security principles can combine to produce an intuitive, secure, and educational banking platform. By studying its architecture, source code, and transactional workflows, developers and students can master the core foundations of financial software engineering.
 
+=======
+# madhu-bank
+>>>>>>> 4fe6bd59b105810db07d0997a4d726ab90688469
