@@ -710,6 +710,146 @@ def get_shared_styles() -> str:
             transform: translateY(0);
         }
     }
+
+    /* =========================================================
+       UNIVERSAL MOBILE & LAPTOP RESPONSIVE STYLES
+       Ensures seamless usability on both smartphones and wide laptop screens.
+       ========================================================= */
+    @media (max-width: 768px) {
+        /* Prevent accidental horizontal screen jitter or overflow */
+        html, body, .stApp, [data-testid="stAppViewContainer"] {
+            overflow-x: hidden !important;
+            max-width: 100vw !important;
+        }
+
+        /* Mobile Container Spacing */
+        .block-container,
+        [data-testid="stMainBlockContainer"] {
+            padding-left: 12px !important;
+            padding-right: 12px !important;
+            padding-top: 105px !important;
+            padding-bottom: 30px !important;
+            max-width: 100% !important;
+        }
+
+        /* 16px font-size on mobile inputs eliminates unwanted iOS Safari auto-zoom */
+        input, textarea, select {
+            font-size: 16px !important;
+            min-height: 42px !important;
+        }
+
+        /* Touch-friendly buttons (minimum 44px tap target height) */
+        .stButton > button,
+        button[data-testid*="baseButton"] {
+            min-height: 44px !important;
+            font-size: 14.5px !important;
+            border-radius: 9px !important;
+        }
+
+        /* Multi-column layouts: stack or wrap gracefully */
+        [data-testid="stHorizontalBlock"]:not(:has(.st-key-user_top_nav)):not(:has(.st-key-admin_top_nav)) {
+            flex-wrap: wrap !important;
+            gap: 12px !important;
+        }
+
+        /* 4-column KPI cards: become an elegant 2x2 grid on mobile phones */
+        [data-testid="stHorizontalBlock"]:has(.admin-kpi) > div[data-testid="stColumn"],
+        [data-testid="stHorizontalBlock"]:has(.admin-kpi) > div[data-testid="column"] {
+            flex: 1 1 calc(50% - 8px) !important;
+            min-width: calc(50% - 8px) !important;
+            max-width: 100% !important;
+        }
+
+        .admin-kpi {
+            min-height: 95px !important;
+            padding: 12px 14px !important;
+        }
+        .admin-kpi-value {
+            font-size: 18px !important;
+        }
+        .admin-kpi-label {
+            font-size: 10.5px !important;
+        }
+        .admin-kpi-foot {
+            font-size: 11px !important;
+        }
+
+        /* Smooth touch-scrolling for data tables & statements */
+        [data-testid="stDataFrame"],
+        [data-testid="stTable"],
+        .stTable {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            width: 100% !important;
+            display: block !important;
+        }
+
+        /* Top Brand Header */
+        .user-fixed-brand,
+        .admin-fixed-brand {
+            padding: 4px 12px !important;
+            height: 48px !important;
+        }
+
+        /* Top Navigation: horizontal touch-swipeable pill bar */
+        .st-key-user_top_nav,
+        .st-key-admin_top_nav {
+            top: 48px !important;
+            height: 48px !important;
+            min-height: 48px !important;
+            padding: 4px 8px !important;
+        }
+
+        .st-key-user_top_nav [data-testid="stHorizontalBlock"],
+        .st-key-admin_top_nav [data-testid="stHorizontalBlock"] {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            gap: 6px !important;
+            scrollbar-width: none !important;
+            padding-bottom: 2px !important;
+        }
+
+        .st-key-user_top_nav [data-testid="stHorizontalBlock"]::-webkit-scrollbar,
+        .st-key-admin_top_nav [data-testid="stHorizontalBlock"]::-webkit-scrollbar {
+            display: none !important;
+        }
+
+        .st-key-user_top_nav [data-testid="stHorizontalBlock"] > div[data-testid="stColumn"],
+        .st-key-user_top_nav [data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+            flex: 0 0 auto !important;
+            min-width: 90px !important;
+            width: auto !important;
+        }
+
+        .st-key-admin_top_nav [data-testid="stHorizontalBlock"] > div[data-testid="stColumn"],
+        .st-key-admin_top_nav [data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+            flex: 0 0 auto !important;
+            min-width: 95px !important;
+            width: auto !important;
+        }
+
+        .st-key-user_top_nav .stButton > button,
+        .st-key-admin_top_nav .stButton > button,
+        .st-key-user_top_nav div[data-testid="stPopover"] > button,
+        .st-key-admin_top_nav div[data-testid="stPopover"] > button {
+            min-height: 38px !important;
+            height: 38px !important;
+            padding: 0 10px !important;
+            font-size: 12px !important;
+            white-space: nowrap !important;
+        }
+    }
+
+    /* Extra Small Screen Adaptations (Compact phones <= 480px) */
+    @media (max-width: 480px) {
+        [data-testid="stHorizontalBlock"]:has(.admin-kpi) > div[data-testid="stColumn"],
+        [data-testid="stHorizontalBlock"]:has(.admin-kpi) > div[data-testid="column"] {
+            flex: 1 1 100% !important;
+            min-width: 100% !important;
+        }
+    }
     </style>
     """
 
@@ -4338,6 +4478,60 @@ def get_auth_theme_styles() -> str:
             max-width: 100% !important;
             min-height: auto !important;
             padding: 20px 12px !important;
+        }}
+    }}
+
+    /* Mobile Screens (Phones <= 768px): Focus directly on the form for native mobile app feel */
+    @media (max-width: 768px) {{
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.auth-visual-panel),
+        div[data-testid="stColumn"]:has(.auth-visual-panel),
+        .auth-visual-panel {{
+            display: none !important;
+        }}
+
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) {{
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 4px !important;
+            margin: 0 auto !important;
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }}
+
+        div[data-testid="stColumn"]:has(.st-key-auth_login_scroll),
+        div[data-testid="stColumn"]:has(.st-key-auth_register_scroll),
+        div[data-testid="stColumn"]:has(.st-key-auth_forgot_scroll),
+        div[data-testid="stColumn"]:has(.st-key-auth_admin_scroll),
+        div[data-testid="stColumn"]:has(.st-key-auth_register_otp_scroll),
+        div[data-testid="stColumn"]:has(.st-key-auth_login_otp_scroll),
+        div[data-testid="stColumn"]:has(.st-key-auth_account_review_scroll) {{
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 18px 14px !important;
+            background: #FFFFFF !important;
+            border-radius: 14px !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+        }}
+
+        .auth-main-heading {{
+            font-size: 24px !important;
+        }}
+
+        .auth-main-desc {{
+            font-size: 13px !important;
+            margin-bottom: 14px !important;
+        }}
+
+        input, textarea, select {{
+            font-size: 16px !important;
+            min-height: 44px !important;
+        }}
+
+        .stButton > button {{
+            min-height: 44px !important;
+            font-size: 15px !important;
+            border-radius: 9px !important;
         }}
     }}
     </style>

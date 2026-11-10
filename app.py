@@ -2188,7 +2188,7 @@ def banking_sidebar():
            cannot create an extra Streamlit block and change vertical alignment. */
         __PROFILE_NAV_CSS__
 
-        /* FINAL navbar geometry: five equal-width controls on ONE LINE.
+        /* FINAL navbar geometry: five equal-width controls on ONE LINE for desktop/laptop.
            Every gap is identical and there is no extra edge padding. */
         .st-key-user_top_nav [data-testid="stHorizontalBlock"] {
             display:flex !important;
@@ -2218,6 +2218,31 @@ def banking_sidebar():
             margin:0 !important;
             padding:0 !important;
             box-sizing:border-box !important;
+        }
+
+        /* Mobile & Tablet Adaptation for Customer Top Navigation */
+        @media (max-width: 780px) {
+            .st-key-user_top_nav [data-testid="stHorizontalBlock"] {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                scrollbar-width: none !important;
+                padding-bottom: 2px !important;
+            }
+            .st-key-user_top_nav [data-testid="stHorizontalBlock"]::-webkit-scrollbar {
+                display: none !important;
+            }
+            .st-key-user_top_nav [data-testid="stHorizontalBlock"] > div[data-testid="stColumn"],
+            .st-key-user_top_nav [data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+                flex: 0 0 auto !important;
+                min-width: 90px !important;
+                width: auto !important;
+            }
+            .st-key-user_top_nav .stButton > button,
+            .st-key-user_top_nav div[data-testid="stPopover"] > button {
+                padding: 0 10px !important;
+                font-size: 12px !important;
+                white-space: nowrap !important;
+            }
         }
         /* Out-of-flow container collapse to eliminate empty space under fixed header */
         div[data-testid="stElementContainer"]:has(.user-fixed-brand),
@@ -4974,6 +4999,33 @@ def admin_sidebar():
             margin: 0 !important;
             padding: 0 !important;
             box-sizing: border-box !important;
+        }
+
+        /* Mobile & Tablet Horizontal Swipeable Bar for Admin Navigation */
+        @media (max-width: 900px) {
+            .st-key-admin_top_nav [data-testid="stHorizontalBlock"] {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                scrollbar-width: none !important;
+                padding-bottom: 2px !important;
+            }
+            .st-key-admin_top_nav [data-testid="stHorizontalBlock"]::-webkit-scrollbar {
+                display: none !important;
+            }
+            .st-key-admin_top_nav [data-testid="stHorizontalBlock"] > div[data-testid="stColumn"],
+            .st-key-admin_top_nav [data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+                flex: 0 0 auto !important;
+                min-width: 95px !important;
+                width: auto !important;
+            }
+            .st-key-admin_top_nav .stButton > button,
+            .st-key-admin_top_nav div[data-testid="stPopover"] > button {
+                padding: 0 8px !important;
+                font-size: 11.5px !important;
+                white-space: nowrap !important;
+            }
         }
 
         /* Admin 8-column Navigation Buttons & Profile Popover Trigger */
