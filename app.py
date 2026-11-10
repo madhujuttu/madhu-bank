@@ -25,7 +25,12 @@ from backend.transfer import transfer_money
 from backend.password_reset import reset_password
 from backend.security import hash_password, verify_password
 from backend.security_pin import set_transaction_pin, verify_transaction_pin
-from backend.email_otp import generate_and_send_otp, get_last_otp_email_error, validate_otp
+from backend.email_otp import (
+    generate_and_send_otp,
+    get_last_otp_email_error,
+    validate_otp,
+    get_last_simulated_otp,
+)
 from config.settings import SMTP_CONFIGURATION_ERROR
 
 from backend.database import users_collection, db
@@ -939,6 +944,9 @@ def login_otp_verification_page():
 
             with st.form("login_otp_form"):
                 st.info(f"OTP sent to {email}")
+                sim_otp = get_last_simulated_otp(email)
+                if sim_otp:
+                    st.warning(f"⚠️ Outbound email is restricted by the cloud host firewall. For simulation testing, your OTP is: **`{sim_otp}`** (also logged in Streamlit Cloud > Manage app > Logs).")
                 otp_value = st.text_input("Enter OTP", max_chars=6, type="password")
                 verify_button = st.form_submit_button("Verify and Login", width="stretch")
 
@@ -1437,6 +1445,9 @@ def register_otp_verification_page():
 
             with st.form("register_otp_form"):
                 st.info(f"OTP sent to {email}")
+                sim_otp = get_last_simulated_otp(email)
+                if sim_otp:
+                    st.warning(f"⚠️ Outbound email is restricted by the cloud host firewall. For simulation testing, your OTP is: **`{sim_otp}`** (also logged in Streamlit Cloud > Manage app > Logs).")
                 otp_value = st.text_input("Enter OTP", max_chars=6, type="password")
                 verify_button = st.form_submit_button("Verify Email", width="stretch")
 
@@ -1591,6 +1602,9 @@ def forgot_password_page():
                 ):
                     reset_email = st.session_state.get("password_reset_email")
                     st.info(f"A password reset OTP was sent to {reset_email}.")
+                    sim_otp = get_last_simulated_otp(reset_email)
+                    if sim_otp:
+                        st.warning(f"⚠️ Outbound email is restricted by the cloud host firewall. For simulation testing, your OTP is: **`{sim_otp}`** (also logged in Streamlit Cloud > Manage app > Logs).")
                     with st.form("password_reset_email_otp_form"):
                         email_otp = st.text_input("Email OTP", max_chars=6, type="password")
                         verify_email_button = st.form_submit_button("Verify Email OTP", width="stretch")
@@ -4267,6 +4281,9 @@ def admin_login_page():
 
             if pending_admin_email:
                 st.info(f"OTP sent to {pending_admin_email}. Enter it to complete admin login.")
+                sim_otp = get_last_simulated_otp(pending_admin_email)
+                if sim_otp:
+                    st.warning(f"⚠️ Outbound email is restricted by the cloud host firewall. For simulation testing, your OTP is: **`{sim_otp}`** (also logged in Streamlit Cloud > Manage app > Logs).")
                 with st.form("admin_login_otp_form"):
                     otp_value = st.text_input(
                         "Admin OTP (6 digits)",
