@@ -715,7 +715,7 @@ def get_shared_styles() -> str:
        UNIVERSAL MOBILE & LAPTOP RESPONSIVE STYLES
        Ensures seamless usability on both smartphones and wide laptop screens.
        ========================================================= */
-    @media (max-width: 768px) {
+    @media (max-width: 850px) {
         /* Prevent accidental horizontal screen jitter or overflow */
         html, body, .stApp, [data-testid="stAppViewContainer"] {
             overflow-x: hidden !important;
@@ -4434,104 +4434,217 @@ def get_auth_theme_styles() -> str:
     }}
 
     /* =========================================================
-       8. RESPONSIVE DESIGN (Section 37)
-       Desktop: 50-50 split. Tablet/Mobile: Form is primary, zero clipping.
+       8. RESPONSIVE DESIGN FOR MOBILE & LAPTOP
+       - Laptop/Desktop (> 900px): 50-50 wide split with rich artwork & sleek form
+       - Smartphone/Tablet (<= 900px): Single centered native mobile card, zero clipping
        ========================================================= */
     @media (max-width: 900px) {{
-        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) {{
-            flex-direction: column !important;
-            min-height: auto !important;
-            width: 95vw !important;
-            padding: 12px !important;
-        }}
-
-        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.auth-visual-panel),
-        div[data-testid="stColumn"]:has(.auth-visual-panel) {{
+        /* Page container on mobile */
+        .stApp:has(.auth-visual-panel) [data-testid="stAppViewContainer"],
+        .stApp:has(.auth-visual-panel) section.main,
+        .stApp:has(.auth-visual-panel) [data-testid="stMain"],
+        .stApp:has(.auth-visual-panel) [data-testid="stMainBlockContainer"],
+        .stApp:has(.auth-visual-panel) .block-container {{
             width: 100% !important;
             max-width: 100% !important;
-            min-height: 260px !important;
+            min-height: 100vh !important;
+            padding: 20px 8px !important;
+            margin: 0 auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
         }}
 
+        /* Outer Auth Box becomes a centered, modern mobile card */
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel),
+        .madhu-auth-container {{
+            display: flex !important;
+            flex-direction: column !important;
+            width: 94vw !important;
+            max-width: 450px !important;
+            min-height: auto !important;
+            height: auto !important;
+            margin: 16px auto !important;
+            padding: 28px 22px !important;
+            border-radius: 24px !important;
+            background: #FFFFFF !important;
+            background-color: #FFFFFF !important;
+            border: 1px solid rgba(255, 255, 255, 0.30) !important;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.28) !important;
+            box-sizing: border-box !important;
+            overflow: visible !important;
+            gap: 0 !important;
+        }}
+
+        /* Completely collapse and hide the left visual artwork column on mobile */
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:first-child,
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.auth-visual-panel),
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.st-key-auth_visual_fixed),
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="column"]:first-child,
+        div[data-testid="stColumn"]:has(.auth-visual-panel),
+        div[data-testid="stColumn"]:has(.st-key-auth_visual_fixed),
+        div[data-testid="column"]:has(.auth-visual-panel),
+        div[data-testid="column"]:has(.st-key-auth_visual_fixed),
+        .st-key-auth_visual_fixed,
         .auth-visual-panel {{
-            min-height: 260px !important;
-            padding: 24px 20px !important;
-        }}
-
-        .visual-hero-heading,
-        .visual-hero-heading * {{
-            font-size: 32px !important;
-        }}
-
-        .banking-stage-container {{
             display: none !important;
+            width: 0 !important;
+            max-width: 0 !important;
+            min-width: 0 !important;
+            height: 0 !important;
+            min-height: 0 !important;
+            flex: 0 0 0% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
         }}
 
+        /* The right form column expands to 100% of the mobile card */
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:last-child,
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:not(:has(.auth-visual-panel)),
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.st-key-auth_login_scroll),
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.st-key-auth_register_scroll),
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.st-key-auth_forgot_scroll),
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.st-key-auth_admin_scroll),
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.st-key-auth_register_otp_scroll),
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.st-key-auth_login_otp_scroll),
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.st-key-auth_account_review_scroll),
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="column"]:last-child,
         div[data-testid="stColumn"]:has(.st-key-auth_login_scroll),
         div[data-testid="stColumn"]:has(.st-key-auth_register_scroll),
         div[data-testid="stColumn"]:has(.st-key-auth_forgot_scroll),
         div[data-testid="stColumn"]:has(.st-key-auth_admin_scroll),
         div[data-testid="stColumn"]:has(.st-key-auth_register_otp_scroll),
         div[data-testid="stColumn"]:has(.st-key-auth_login_otp_scroll),
-        div[data-testid="stColumn"]:has(.st-key-auth_account_review_scroll) {{
+        div[data-testid="stColumn"]:has(.st-key-auth_account_review_scroll),
+        div[data-testid="column"]:has(.st-key-auth_login_scroll),
+        div[data-testid="column"]:has(.st-key-auth_register_scroll),
+        div[data-testid="column"]:has(.st-key-auth_forgot_scroll),
+        div[data-testid="column"]:has(.st-key-auth_admin_scroll),
+        div[data-testid="column"]:has(.st-key-auth_register_otp_scroll),
+        div[data-testid="column"]:has(.st-key-auth_login_otp_scroll),
+        div[data-testid="column"]:has(.st-key-auth_account_review_scroll),
+        .madhu-auth-form {{
+            display: block !important;
             width: 100% !important;
             max-width: 100% !important;
+            min-width: 100% !important;
+            flex: 1 1 100% !important;
             min-height: auto !important;
-            padding: 20px 12px !important;
-        }}
-    }}
-
-    /* Mobile Screens (Phones <= 768px): Focus directly on the form for native mobile app feel */
-    @media (max-width: 768px) {{
-        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.auth-visual-panel),
-        div[data-testid="stColumn"]:has(.auth-visual-panel),
-        .auth-visual-panel {{
-            display: none !important;
-        }}
-
-        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) {{
-            width: 100% !important;
-            max-width: 100% !important;
-            padding: 4px !important;
-            margin: 0 auto !important;
+            height: auto !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            background: transparent !important;
+            background-color: transparent !important;
             border: none !important;
             box-shadow: none !important;
-            background: transparent !important;
+            border-radius: 0 !important;
+            box-sizing: border-box !important;
         }}
 
-        div[data-testid="stColumn"]:has(.st-key-auth_login_scroll),
-        div[data-testid="stColumn"]:has(.st-key-auth_register_scroll),
-        div[data-testid="stColumn"]:has(.st-key-auth_forgot_scroll),
-        div[data-testid="stColumn"]:has(.st-key-auth_admin_scroll),
-        div[data-testid="stColumn"]:has(.st-key-auth_register_otp_scroll),
-        div[data-testid="stColumn"]:has(.st-key-auth_login_otp_scroll),
-        div[data-testid="stColumn"]:has(.st-key-auth_account_review_scroll) {{
+        /* Scroll containers & wrappers become full-width natural flow containers */
+        .st-key-auth_login_scroll,
+        .st-key-auth_register_scroll,
+        .st-key-auth_forgot_scroll,
+        .st-key-auth_admin_scroll,
+        .st-key-auth_register_otp_scroll,
+        .st-key-auth_login_otp_scroll,
+        .st-key-auth_account_review_scroll,
+        .st-key-auth_login_scroll > div,
+        .st-key-auth_register_scroll > div,
+        .st-key-auth_forgot_scroll > div,
+        .st-key-auth_admin_scroll > div,
+        .st-key-auth_register_otp_scroll > div,
+        .st-key-auth_login_otp_scroll > div,
+        .st-key-auth_account_review_scroll > div,
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) [data-testid="stForm"],
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) [data-testid="stForm"] > div,
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) [data-testid="stVerticalBlock"] {{
             width: 100% !important;
             max-width: 100% !important;
-            padding: 18px 14px !important;
-            background: #FFFFFF !important;
-            border-radius: 14px !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+            min-width: 100% !important;
+            max-height: none !important;
+            height: auto !important;
+            overflow: visible !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
         }}
 
+        /* Mobile Typography */
         .auth-main-heading {{
-            font-size: 24px !important;
+            font-size: 26px !important;
+            line-height: 1.25 !important;
+            margin-bottom: 4px !important;
+            text-align: center !important;
         }}
 
         .auth-main-desc {{
-            font-size: 13px !important;
-            margin-bottom: 14px !important;
+            font-size: 13.5px !important;
+            margin-bottom: 16px !important;
+            text-align: center !important;
         }}
 
-        input, textarea, select {{
-            font-size: 16px !important;
-            min-height: 44px !important;
+        .auth-brand-header {{
+            justify-content: center !important;
+            margin-bottom: 8px !important;
         }}
 
-        .stButton > button {{
-            min-height: 44px !important;
+        /* Form Controls & Inputs on Mobile */
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) [data-testid="stTextInputRootElement"],
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) [data-testid="stNumberInputContainer"],
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) [data-testid="stTextAreaRootElement"],
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) div[data-baseweb="input"],
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) div[data-baseweb="base-input"] {{
+            width: 100% !important;
+            max-width: 100% !important;
+            min-height: 46px !important;
+            border-radius: 8px !important;
+            box-sizing: border-box !important;
+        }}
+
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) input,
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) textarea,
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) select {{
             font-size: 15px !important;
+            min-height: 44px !important;
+            padding: 10px 12px !important;
+            box-sizing: border-box !important;
+        }}
+
+        /* Full-width touch-friendly buttons on mobile */
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) .stButton,
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) [data-testid="stFormSubmitButton"] {{
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 auto 8px auto !important;
+        }}
+
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) .stButton > button,
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) [data-testid="stFormSubmitButton"] > button {{
+            width: 100% !important;
+            max-width: 100% !important;
+            min-height: 46px !important;
+            height: 46px !important;
+            font-size: 15px !important;
+            font-weight: 600 !important;
             border-radius: 9px !important;
+            box-sizing: border-box !important;
+        }}
+
+        /* Alerts and notices */
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) .stAlert {{
+            width: 100% !important;
+            max-width: 100% !important;
+            font-size: 13px !important;
+            margin-bottom: 12px !important;
+            box-sizing: border-box !important;
         }}
     }}
     </style>

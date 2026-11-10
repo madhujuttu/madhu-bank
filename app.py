@@ -852,7 +852,7 @@ def login_page():
                     email = st.text_input(
                         "Registered Email",
                         key="login_email",
-                        placeholder="Enter the email registered with your account",
+                        placeholder="Enter your registered email",
                     )
                     send_otp_button = st.form_submit_button("Send OTP", width="stretch")
 
@@ -1550,7 +1550,7 @@ def forgot_password_page():
                         email = st.text_input(
                             "Registered Email",
                             key="reset_email",
-                            placeholder="Enter the email registered to your account",
+                            placeholder="Enter your registered email",
                         )
                         continue_button = st.form_submit_button("Send Email OTP", width="stretch")
 
