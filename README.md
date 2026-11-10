@@ -1,4 +1,3 @@
-<<<<<<<HEAD
 # Madhu Bank — Educational Banking Simulation System
 
 ---
