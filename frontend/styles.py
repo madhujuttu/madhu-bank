@@ -4444,11 +4444,13 @@ def get_auth_theme_styles() -> str:
         .stApp:has(.auth-visual-panel) section.main,
         .stApp:has(.auth-visual-panel) [data-testid="stMain"],
         .stApp:has(.auth-visual-panel) [data-testid="stMainBlockContainer"],
-        .stApp:has(.auth-visual-panel) .block-container {{
+        .stApp:has(.auth-visual-panel) .block-container,
+        .stApp:has(.st-key-auth_visual_fixed) .block-container,
+        .stApp:has(.st-key-auth_login_scroll) .block-container {{
             width: 100% !important;
             max-width: 100% !important;
             min-height: 100vh !important;
-            padding: 20px 8px !important;
+            padding: 16px 8px !important;
             margin: 0 auto !important;
             display: flex !important;
             flex-direction: column !important;
@@ -4458,32 +4460,37 @@ def get_auth_theme_styles() -> str:
             overflow-x: hidden !important;
         }}
 
-        /* Outer Auth Box becomes a centered, modern mobile card */
+        /* Outer Auth Box becomes a compact, perfectly centered mobile card */
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel),
+        [data-testid="stHorizontalBlock"]:has(.st-key-auth_visual_fixed),
         .madhu-auth-container {{
             display: flex !important;
             flex-direction: column !important;
-            width: 94vw !important;
-            max-width: 450px !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            width: 92vw !important;
+            max-width: 380px !important;
+            min-width: 0 !important;
             min-height: auto !important;
             height: auto !important;
-            margin: 16px auto !important;
-            padding: 28px 22px !important;
-            border-radius: 24px !important;
+            margin: 14px auto !important;
+            padding: 20px 18px 14px 18px !important;
+            border-radius: 20px !important;
             background: #FFFFFF !important;
             background-color: #FFFFFF !important;
             border: 1px solid rgba(255, 255, 255, 0.30) !important;
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.28) !important;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25) !important;
             box-sizing: border-box !important;
             overflow: visible !important;
             gap: 0 !important;
         }}
 
-        /* Completely collapse and hide the left visual artwork column on mobile */
+        /* Completely collapse and remove the left visual artwork column from flow on mobile */
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:first-child,
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.auth-visual-panel),
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.st-key-auth_visual_fixed),
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="column"]:first-child,
+        [data-testid="stHorizontalBlock"]:has(.st-key-auth_visual_fixed) > div:first-child,
         div[data-testid="stColumn"]:has(.auth-visual-panel),
         div[data-testid="stColumn"]:has(.st-key-auth_visual_fixed),
         div[data-testid="column"]:has(.auth-visual-panel),
@@ -4491,6 +4498,7 @@ def get_auth_theme_styles() -> str:
         .st-key-auth_visual_fixed,
         .auth-visual-panel {{
             display: none !important;
+            position: absolute !important;
             width: 0 !important;
             max-width: 0 !important;
             min-width: 0 !important;
@@ -4505,7 +4513,7 @@ def get_auth_theme_styles() -> str:
             pointer-events: none !important;
         }}
 
-        /* The right form column expands to 100% of the mobile card */
+        /* The right form column expands to 100% of the centered card */
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:last-child,
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:not(:has(.auth-visual-panel)),
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.st-key-auth_login_scroll),
@@ -4516,6 +4524,7 @@ def get_auth_theme_styles() -> str:
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.st-key-auth_login_otp_scroll),
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="stColumn"]:has(.st-key-auth_account_review_scroll),
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) > div[data-testid="column"]:last-child,
+        [data-testid="stHorizontalBlock"]:has(.st-key-auth_visual_fixed) > div:last-child,
         div[data-testid="stColumn"]:has(.st-key-auth_login_scroll),
         div[data-testid="stColumn"]:has(.st-key-auth_register_scroll),
         div[data-testid="stColumn"]:has(.st-key-auth_forgot_scroll),
@@ -4577,73 +4586,153 @@ def get_auth_theme_styles() -> str:
             box-sizing: border-box !important;
         }}
 
-        /* Mobile Typography */
+        /* Compact Mobile Typography */
+        .auth-brand-header {{
+            justify-content: center !important;
+            margin-bottom: 6px !important;
+        }}
+
+        .auth-brand-logo svg {{
+            width: 24px !important;
+            height: 24px !important;
+        }}
+
+        .auth-brand-title {{
+            font-size: 13px !important;
+            letter-spacing: 1.2px !important;
+        }}
+
         .auth-main-heading {{
-            font-size: 26px !important;
-            line-height: 1.25 !important;
-            margin-bottom: 4px !important;
+            font-size: 20px !important;
+            line-height: 1.2 !important;
+            margin-bottom: 2px !important;
             text-align: center !important;
         }}
 
         .auth-main-desc {{
-            font-size: 13.5px !important;
-            margin-bottom: 16px !important;
+            font-size: 12px !important;
+            margin-bottom: 12px !important;
             text-align: center !important;
         }}
 
-        .auth-brand-header {{
-            justify-content: center !important;
-            margin-bottom: 8px !important;
-        }}
-
-        /* Form Controls & Inputs on Mobile */
+        /* Compact Form Controls & Inputs on Mobile */
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) [data-testid="stTextInputRootElement"],
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) [data-testid="stNumberInputContainer"],
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) [data-testid="stTextAreaRootElement"],
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) div[data-baseweb="input"],
-        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) div[data-baseweb="base-input"] {{
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) div[data-baseweb="base-input"],
+        .st-key-auth_login_scroll [data-testid="stTextInputRootElement"],
+        .st-key-auth_register_scroll [data-testid="stTextInputRootElement"],
+        .st-key-auth_forgot_scroll [data-testid="stTextInputRootElement"],
+        .st-key-auth_admin_scroll [data-testid="stTextInputRootElement"] {{
             width: 100% !important;
             max-width: 100% !important;
-            min-height: 46px !important;
+            min-height: 38px !important;
+            height: 38px !important;
             border-radius: 8px !important;
             box-sizing: border-box !important;
+            margin-bottom: 2px !important;
         }}
 
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) input,
         [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) textarea,
-        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) select {{
-            font-size: 15px !important;
-            min-height: 44px !important;
-            padding: 10px 12px !important;
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) select,
+        .st-key-auth_login_scroll input,
+        .st-key-auth_register_scroll input,
+        .st-key-auth_forgot_scroll input,
+        .st-key-auth_admin_scroll input {{
+            font-size: 14px !important;
+            min-height: 36px !important;
+            height: 36px !important;
+            padding: 6px 10px !important;
             box-sizing: border-box !important;
         }}
 
-        /* Full-width touch-friendly buttons on mobile */
-        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) .stButton,
-        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) [data-testid="stFormSubmitButton"] {{
-            width: 100% !important;
-            max-width: 100% !important;
-            margin: 0 auto 8px auto !important;
+        /* Form block spacing */
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) [data-testid="stVerticalBlock"] {{
+            gap: 0.35rem !important;
         }}
 
-        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) .stButton > button,
-        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) [data-testid="stFormSubmitButton"] > button {{
+        /* Primary Form Submit Button (e.g. "Send OTP", "Sign In") */
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) [data-testid="stFormSubmitButton"],
+        .st-key-auth_login_scroll [data-testid="stFormSubmitButton"],
+        .st-key-auth_register_scroll [data-testid="stFormSubmitButton"],
+        .st-key-auth_forgot_scroll [data-testid="stFormSubmitButton"],
+        .st-key-auth_admin_scroll [data-testid="stFormSubmitButton"] {{
             width: 100% !important;
             max-width: 100% !important;
-            min-height: 46px !important;
-            height: 46px !important;
-            font-size: 15px !important;
+            margin: 6px auto 6px auto !important;
+        }}
+
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) [data-testid="stFormSubmitButton"] > button,
+        .st-key-auth_login_scroll [data-testid="stFormSubmitButton"] > button,
+        .st-key-auth_register_scroll [data-testid="stFormSubmitButton"] > button,
+        .st-key-auth_forgot_scroll [data-testid="stFormSubmitButton"] > button,
+        .st-key-auth_admin_scroll [data-testid="stFormSubmitButton"] > button {{
+            width: 100% !important;
+            max-width: 100% !important;
+            min-height: 40px !important;
+            height: 40px !important;
+            font-size: 14px !important;
             font-weight: 600 !important;
-            border-radius: 9px !important;
+            border-radius: 8px !important;
+            box-sizing: border-box !important;
+        }}
+
+        /* Keep secondary buttons ("Forgot Password" & "Register") side-by-side on 1 single row */
+        .st-key-auth_login_scroll [data-testid="stHorizontalBlock"],
+        .st-key-auth_register_scroll [data-testid="stHorizontalBlock"],
+        .st-key-auth_forgot_scroll [data-testid="stHorizontalBlock"] {{
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            gap: 8px !important;
+            width: 100% !important;
+            margin: 0 auto 4px auto !important;
+        }}
+
+        .st-key-auth_login_scroll [data-testid="stHorizontalBlock"] > div,
+        .st-key-auth_register_scroll [data-testid="stHorizontalBlock"] > div,
+        .st-key-auth_forgot_scroll [data-testid="stHorizontalBlock"] > div {{
+            flex: 1 1 50% !important;
+            width: 50% !important;
+            max-width: 50% !important;
+            min-width: 0 !important;
+        }}
+
+        /* Secondary buttons styling */
+        .st-key-auth_login_scroll .stButton,
+        .st-key-auth_register_scroll .stButton,
+        .st-key-auth_forgot_scroll .stButton,
+        .st-key-auth_admin_scroll .stButton {{
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 auto 4px auto !important;
+        }}
+
+        .st-key-auth_login_scroll .stButton > button,
+        .st-key-auth_register_scroll .stButton > button,
+        .st-key-auth_forgot_scroll .stButton > button,
+        .st-key-auth_admin_scroll .stButton > button {{
+            width: 100% !important;
+            max-width: 100% !important;
+            min-height: 34px !important;
+            height: 34px !important;
+            font-size: 12px !important;
+            font-weight: 500 !important;
+            border-radius: 8px !important;
+            padding: 0 6px !important;
             box-sizing: border-box !important;
         }}
 
         /* Alerts and notices */
-        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) .stAlert {{
+        [data-testid="stHorizontalBlock"]:has(.auth-visual-panel) .stAlert,
+        .st-key-auth_login_scroll .stAlert {{
             width: 100% !important;
             max-width: 100% !important;
-            font-size: 13px !important;
-            margin-bottom: 12px !important;
+            font-size: 12px !important;
+            padding: 8px 12px !important;
+            margin-bottom: 8px !important;
             box-sizing: border-box !important;
         }}
     }}

@@ -5484,6 +5484,7 @@ def admin_users():
                     "username",
                     "N/A",
                 ),
+                "Email": account.get("email") or account.get("registered_email") or "N/A",
                 "Account": account.get(
                     "account_type",
                     "N/A",
@@ -5653,6 +5654,7 @@ def admin_accounts():
                     except TypeError:
                         pop_ctx = st.popover("Details")
                 with pop_ctx:
+                    customer_email = account.get("email") or account.get("registered_email") or "N/A"
                     details = pd.DataFrame(
                         [
                             [
@@ -5665,6 +5667,10 @@ def admin_accounts():
                                     "username",
                                     "N/A",
                                 ),
+                            ],
+                            [
+                                "Customer Email",
+                                customer_email,
                             ],
                             [
                                 "Account Number",
@@ -5710,7 +5716,7 @@ def admin_accounts():
                         details,
                         hide_index=True,
                         width=380,
-                        height=300,
+                        height=330,
                     )
 
             with a3:
@@ -6158,7 +6164,10 @@ def admin_requests():
                     row1, row2, row3 = st.columns([2.1, 1.4, 1.1])
                     with row1:
                         st.markdown(f"**{name}**")
-                        st.caption(f"Username: {username} · Account Number: {account_number}")
+                        req_user = users_collection.find_one({"username": username}) if username else None
+                        req_email = (req_user.get("email") if req_user else None) or request.get("email") or ""
+                        email_info = f" · Email: {req_email}" if req_email else ""
+                        st.caption(f"Username: {username}{email_info} · Account Number: {account_number}")
                     with row2:
                         st.write(f"**Status:** {status}")
                         if created_at:
