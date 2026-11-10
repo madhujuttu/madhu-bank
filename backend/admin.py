@@ -126,20 +126,38 @@ def search_accounts(search_text):
     return list(accounts)
 
 
-def delete_account(username):
-    result = users_collection.delete_one({"username": username})
+def delete_account(username, account_number=None):
+    query = {}
+    if account_number:
+        query["account_number"] = str(account_number)
+    elif username:
+        query["username"] = username
+    else:
+        return False
+
+    result = users_collection.delete_one(query)
+    if result.deleted_count == 0 and account_number and username:
+        result = users_collection.delete_one({"username": username})
     if result.deleted_count == 0:
         return False
-    transactions_collection.delete_many({"username": username})
+    if username:
+        transactions_collection.delete_many({"username": username})
+    if account_number:
+        transactions_collection.delete_many({"account_number": str(account_number)})
     return True
 
 
-def disable_account(username):
+def disable_account(username, account_number=None):
+    query = {}
+    if account_number:
+        query["account_number"] = str(account_number)
+    elif username:
+        query["username"] = username
+    else:
+        return False
 
     result = users_collection.update_one(
-        {
-            "username": username
-        },
+        query,
         {
             "$set": {
                 "status": "Disabled"
@@ -147,29 +165,41 @@ def disable_account(username):
         }
     )
 
-    if result.modified_count > 0:
+    if (result.modified_count == 0 and result.matched_count == 0) and account_number and username:
+        result = users_collection.update_one(
+            {"username": username},
+            {"$set": {"status": "Disabled"}}
+        )
+
+    if result.modified_count > 0 or result.matched_count > 0:
         try:
             from backend.alerts import dispatch_system_alert
             dispatch_system_alert(
                 alert_type="ACCOUNT_STATUS_CHANGE",
-                title=f"Account Frozen: {username}",
-                message=f"Customer account '{username}' has been frozen/disabled by Administrator.",
+                title=f"Account Frozen: {username or account_number}",
+                message=f"Customer account '{username or account_number}' has been frozen/disabled by Administrator.",
                 severity="warning",
-                metadata={"username": username, "action": "freeze"},
+                metadata={"username": username, "account_number": account_number, "action": "freeze"},
                 send_email=True,
             )
         except Exception:
             pass
+        return True
 
-    return result.modified_count > 0
+    return False
 
 
-def enable_account(username):
+def enable_account(username, account_number=None):
+    query = {}
+    if account_number:
+        query["account_number"] = str(account_number)
+    elif username:
+        query["username"] = username
+    else:
+        return False
 
     result = users_collection.update_one(
-        {
-            "username": username
-        },
+        query,
         {
             "$set": {
                 "status": "Active"
@@ -177,7 +207,28 @@ def enable_account(username):
         }
     )
 
-    return result.modified_count > 0
+    if (result.modified_count == 0 and result.matched_count == 0) and account_number and username:
+        result = users_collection.update_one(
+            {"username": username},
+            {"$set": {"status": "Active"}}
+        )
+
+    if result.modified_count > 0 or result.matched_count > 0:
+        try:
+            from backend.alerts import dispatch_system_alert
+            dispatch_system_alert(
+                alert_type="ACCOUNT_STATUS_CHANGE",
+                title=f"Account Activated: {username or account_number}",
+                message=f"Customer account '{username or account_number}' has been activated by Administrator.",
+                severity="info",
+                metadata={"username": username, "account_number": account_number, "action": "activate"},
+                send_email=True,
+            )
+        except Exception:
+            pass
+        return True
+
+    return False
 
 
 def get_total_accounts():

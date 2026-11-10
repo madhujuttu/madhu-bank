@@ -5562,14 +5562,19 @@ def admin_accounts():
 
     active_user = st.session_state.get("last_managed_user")
 
-    for account in accounts:
+    for idx, account in enumerate(accounts):
         username = account.get("username", "")
+        account_number = account.get("account_number", "")
         name = get_account_name_from_admin(account)
         status = account.get("status", "Active")
-        is_expanded = (active_user == username)
 
+        # Guarantee a unique identifier for every account widget on this page
+        unique_ref = f"{account_number or username or 'acc'}_{idx}"
+        is_expanded = (active_user in (username, account_number, unique_ref))
+
+        display_acc = f" (#{account_number})" if account_number else ""
         with st.expander(
-            f"{name} - {username}",
+            f"{name} - {username}{display_acc}",
             expanded=is_expanded,
         ):
             info1, info2, info3 = st.columns(3)
@@ -5618,16 +5623,16 @@ def admin_accounts():
 
                 if st.button(
                     action,
-                    key=f"admin_status_{username}",
+                    key=f"admin_status_{unique_ref}",
                     width='stretch',
                 ):
                     if action == "Disable":
-                        result = disable_account(username)
+                        result = disable_account(username, account_number=account_number)
                     else:
-                        result = enable_account(username)
+                        result = enable_account(username, account_number=account_number)
 
                     if result:
-                        st.session_state["last_managed_user"] = username
+                        st.session_state["last_managed_user"] = unique_ref
                         st.success(f"Account {action.lower()}d.")
                         st.rerun()
                     else:
@@ -5660,6 +5665,10 @@ def admin_accounts():
                                     "username",
                                     "N/A",
                                 ),
+                            ],
+                            [
+                                "Account Number",
+                                str(account_number or "N/A"),
                             ],
                             [
                                 "Date of Birth",
@@ -5705,7 +5714,7 @@ def admin_accounts():
                     )
 
             with a3:
-                delete_key = f"admin_delete_confirm_{username}"
+                delete_key = f"admin_delete_confirm_{unique_ref}"
 
                 if not st.session_state.get(
                     delete_key,
@@ -5713,7 +5722,7 @@ def admin_accounts():
                 ):
                     if st.button(
                         "Delete",
-                        key=f"admin_delete_{username}",
+                        key=f"admin_delete_{unique_ref}",
                         width='stretch',
                     ):
                         st.session_state[delete_key] = True
@@ -5729,10 +5738,10 @@ def admin_accounts():
                     with d1:
                         if st.button(
                             "Confirm delete",
-                            key=f"admin_confirm_delete_{username}",
+                            key=f"admin_confirm_delete_{unique_ref}",
                             width='stretch',
                         ):
-                            if delete_account(username):
+                            if delete_account(username, account_number=account_number):
                                 st.session_state[delete_key] = False
                                 st.session_state["last_managed_user"] = None
                                 st.success("Account deleted.")
@@ -5743,7 +5752,7 @@ def admin_accounts():
                     with d2:
                         if st.button(
                             "Cancel",
-                            key=f"admin_cancel_delete_{username}",
+                            key=f"admin_cancel_delete_{unique_ref}",
                             width='stretch',
                         ):
                             st.session_state[delete_key] = False
@@ -6133,7 +6142,7 @@ def admin_requests():
         if not filtered:
             st.info("No account review requests match the selected status.")
         else:
-            for request in filtered:
+            for idx, request in enumerate(filtered):
                 request_id = request.get("_id")
                 username = str(request.get("username", "Unknown"))
                 name = str(request.get("name", username))
@@ -6143,6 +6152,7 @@ def admin_requests():
                 reviewed_at = request.get("reviewed_at")
                 request_note = request.get("request_note") or ""
                 admin_note = request.get("admin_note") or ""
+                req_key = f"{request_id}_{idx}"
 
                 with st.container(border=True):
                     row1, row2, row3 = st.columns([2.1, 1.4, 1.1])
@@ -6166,7 +6176,7 @@ def admin_requests():
                         st.write(admin_note)
 
                     if status.lower() == "pending":
-                        reason_key = f"admin_request_reason_{request_id}"
+                        reason_key = f"admin_request_reason_{req_key}"
                         reason = st.text_area(
                             "Reason / admin note",
                             key=reason_key,
@@ -6177,13 +6187,13 @@ def admin_requests():
                         with action1:
                             approve = st.button(
                                 "Accept & Activate",
-                                key=f"approve_request_{request_id}",
+                                key=f"approve_request_{req_key}",
                                 width="stretch",
                             )
                         with action2:
                             reject = st.button(
                                 "Reject",
-                                key=f"reject_request_{request_id}",
+                                key=f"reject_request_{req_key}",
                                 width="stretch",
                             )
                         with action3:
@@ -6257,7 +6267,7 @@ def admin_requests():
                 unsafe_allow_html=True,
             )
         else:
-            for alert in filtered_alerts:
+            for idx, alert in enumerate(filtered_alerts):
                 aid = alert.get("alert_id")
                 atype = alert.get("type", "SYSTEM")
                 title = alert.get("title", "Alert")
@@ -6268,6 +6278,7 @@ def admin_requests():
                 meta = alert.get("metadata", {})
                 email_sent = alert.get("email_sent", False)
                 recipient = alert.get("recipient_email")
+                aid_key = f"{aid}_{idx}"
 
                 is_crit = severity in ("critical", "high", "danger")
                 badge_bg = "#FDECEC" if is_crit else "#FEF6E7" if severity in ("warning", "medium") else "#E8F5F0"
@@ -6341,17 +6352,17 @@ def admin_requests():
                         if status == "Unread":
                             ac1, ac2 = st.columns(2, gap="small")
                             with ac1:
-                                if st.button("Acknowledge", key=f"req_ack_{aid}", width="stretch", type="primary"):
+                                if st.button("Acknowledge", key=f"req_ack_{aid_key}", width="stretch", type="primary"):
                                     acknowledge_system_alert(aid)
                                     st.toast(f"Alert {aid} acknowledged.", icon="✅")
                                     st.rerun()
                             with ac2:
-                                if st.button("Dismiss", key=f"req_dism_{aid}", width="stretch"):
+                                if st.button("Dismiss", key=f"req_dism_{aid_key}", width="stretch"):
                                     dismiss_system_alert(aid)
                                     st.toast(f"Alert {aid} dismissed.", icon="🗑️")
                                     st.rerun()
                         elif status == "Acknowledged":
-                            if st.button("Dismiss Alert", key=f"req_dism_{aid}", width="stretch"):
+                            if st.button("Dismiss Alert", key=f"req_dism_ack_{aid_key}", width="stretch"):
                                 dismiss_system_alert(aid)
                                 st.toast(f"Alert {aid} dismissed.", icon="🗑️")
                                 st.rerun()
