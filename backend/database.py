@@ -119,27 +119,30 @@ def _ensure_index(
     expire_after_seconds=None,
 ):
     """Create an index only when an equivalent one does not already exist."""
-    existing = _find_equivalent_index(
-        collection,
-        keys,
-        unique=unique,
-        sparse=sparse,
-        expire_after_seconds=expire_after_seconds,
-    )
+    try:
+        existing = _find_equivalent_index(
+            collection,
+            keys,
+            unique=unique,
+            sparse=sparse,
+            expire_after_seconds=expire_after_seconds,
+        )
 
-    if existing:
-        return existing
+        if existing:
+            return existing
 
-    options = {"name": name}
+        options = {"name": name}
 
-    if unique is not None:
-        options["unique"] = unique
-    if sparse is not None:
-        options["sparse"] = sparse
-    if expire_after_seconds is not None:
-        options["expireAfterSeconds"] = expire_after_seconds
+        if unique is not None:
+            options["unique"] = unique
+        if sparse is not None:
+            options["sparse"] = sparse
+        if expire_after_seconds is not None:
+            options["expireAfterSeconds"] = expire_after_seconds
 
-    return collection.create_index(keys, **options)
+        return collection.create_index(keys, **options)
+    except Exception:
+        return None
 
 
 # ---------------------------------------------------------------------------
@@ -185,7 +188,10 @@ def cleanup_duplicate_users(collection=None):
         pass
 
 
-cleanup_duplicate_users(users_collection)
+try:
+    cleanup_duplicate_users(users_collection)
+except Exception:
+    pass
 
 _ensure_index(
     users_collection,

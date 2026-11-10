@@ -33,7 +33,7 @@ from backend.email_otp import (
 )
 from config.settings import SMTP_CONFIGURATION_ERROR
 
-from backend.database import users_collection, db, cleanup_duplicate_users
+from backend.database import users_collection, db
 from backend.alerts import (
     dispatch_system_alert,
     get_system_alerts,
@@ -5451,7 +5451,6 @@ def admin_dashboard():
 # =========================================================
 
 def admin_users():
-    cleanup_duplicate_users()
     admin_header(
         "Users",
         "Search users and review account ownership.",
@@ -5539,7 +5538,6 @@ def get_account_name_from_admin(account):
 # =========================================================
 
 def admin_accounts():
-    cleanup_duplicate_users()
     admin_header(
         "Accounts",
         "Manage account status, inspect details, and remove accounts.",
