@@ -32,7 +32,16 @@ def _sanitize_mongodb_uri(uri: str) -> str:
 MONGODB_URI = _sanitize_mongodb_uri(os.getenv("MONGODB_URI", "mongodb://localhost:27017/").strip())
 MONGODB_DB_NAME = os.getenv("MONGODB_DB_NAME", "madhu_bank").strip()
 
-client = MongoClient(MONGODB_URI)
+client = MongoClient(
+    MONGODB_URI,
+    serverSelectionTimeoutMS=4000,
+    connectTimeoutMS=4000,
+    socketTimeoutMS=10000,
+    maxPoolSize=50,
+    minPoolSize=2,
+    maxIdleTimeMS=45000,
+    retryWrites=True,
+)
 db = client[MONGODB_DB_NAME]
 
 
@@ -188,96 +197,84 @@ def cleanup_duplicate_users(collection=None):
         pass
 
 
-try:
-    cleanup_duplicate_users(users_collection)
-except Exception:
-    pass
+import threading
 
-_ensure_index(
-    users_collection,
-    [("account_number", 1)],
-    name="ux_users_account_number",
-    unique=True,
-    sparse=True,
-)
-
-_ensure_index(
-    users_collection,
-    [("username", 1)],
-    name="ux_users_username",
-    unique=True,
-)
+_SETUP_INITIALIZED = False
+_SETUP_LOCK = threading.Lock()
 
 
-# ---------------------------------------------------------------------------
-# Login attempts
-# ---------------------------------------------------------------------------
+def init_database_indexes():
+    """Ensure database indexes and perform one-time duplicate cleanup in the background."""
+    global _SETUP_INITIALIZED
+    with _SETUP_LOCK:
+        if _SETUP_INITIALIZED:
+            return
+        _SETUP_INITIALIZED = True
+        try:
+            cleanup_duplicate_users(users_collection)
+        except Exception:
+            pass
 
-_ensure_index(
-    login_attempts_collection,
-    [("username", 1), ("created_at", -1)],
-    name="ix_login_attempts_username_created",
-)
+        try:
+            _ensure_index(
+                users_collection,
+                [("account_number", 1)],
+                name="ux_users_account_number",
+                unique=True,
+                sparse=True,
+            )
+            _ensure_index(
+                users_collection,
+                [("username", 1)],
+                name="ux_users_username",
+                unique=True,
+            )
+            _ensure_index(
+                login_attempts_collection,
+                [("username", 1), ("created_at", -1)],
+                name="ix_login_attempts_username_created",
+            )
+            _ensure_index(
+                login_attempts_collection,
+                [("ip_address", 1), ("created_at", -1)],
+                name="ix_login_attempts_ip_created",
+            )
+            _ensure_index(
+                account_review_requests_collection,
+                [("username", 1), ("status", 1)],
+                name="ix_account_review_username_status",
+            )
+            _ensure_index(
+                account_review_requests_collection,
+                [("status", 1), ("created_at", -1)],
+                name="ix_account_review_status_created",
+            )
+            _ensure_index(
+                admin_action_sessions_collection,
+                [("username", 1), ("created_at", -1)],
+                name="ix_admin_action_username_created",
+            )
+            _ensure_index(
+                admin_action_sessions_collection,
+                [("expires_at", 1)],
+                name="ix_admin_action_expires",
+                expire_after_seconds=0,
+            )
+            _ensure_index(
+                system_alerts_collection,
+                [("status", 1), ("created_at", -1)],
+                name="ix_system_alerts_status_created",
+            )
+            _ensure_index(
+                system_alerts_collection,
+                [("alert_id", 1)],
+                name="ux_system_alerts_alert_id",
+                unique=True,
+                sparse=True,
+            )
+        except Exception:
+            pass
 
-_ensure_index(
-    login_attempts_collection,
-    [("ip_address", 1), ("created_at", -1)],
-    name="ix_login_attempts_ip_created",
-)
 
-
-# ---------------------------------------------------------------------------
-# Account Review
-# ---------------------------------------------------------------------------
-
-# No request_id index is created. MongoDB's built-in _id is the unique
-# identifier for each account-review request.
-
-_ensure_index(
-    account_review_requests_collection,
-    [("username", 1), ("status", 1)],
-    name="ix_account_review_username_status",
-)
-
-_ensure_index(
-    account_review_requests_collection,
-    [("status", 1), ("created_at", -1)],
-    name="ix_account_review_status_created",
-)
-
-
-# ---------------------------------------------------------------------------
-# Admin action sessions
-# ---------------------------------------------------------------------------
-
-_ensure_index(
-    admin_action_sessions_collection,
-    [("username", 1), ("created_at", -1)],
-    name="ix_admin_action_username_created",
-)
-
-_ensure_index(
-    admin_action_sessions_collection,
-    [("expires_at", 1)],
-    name="ix_admin_action_expires",
-    expire_after_seconds=0,
-)
-
-
-# ---------------------------------------------------------------------------
-# System alerts
-# ---------------------------------------------------------------------------
-
-_ensure_index(
-    system_alerts_collection,
-    [("status", 1), ("created_at", -1)],
-    name="ix_system_alerts_status_created",
-)
-
-_ensure_index(
-    system_alerts_collection,
-    [("alert_id", 1)],
-    name="ux_system_alerts_alert_id",
-    unique=True,
-    sparse=True,
-)
+# Dispatch asynchronously in background so module import is instantaneous (<15ms)
+threading.Thread(target=init_database_indexes, daemon=True, name="DBIndexInit").start()

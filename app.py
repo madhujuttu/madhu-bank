@@ -127,7 +127,16 @@ def get_username_by_account_number(account_number):
 
 
 def ensure_all_account_numbers():
-    for user in users_collection.find({}, {"username": 1, "account_number": 1}):
+    for user in users_collection.find(
+        {
+            "$or": [
+                {"account_number": {"$exists": False}},
+                {"account_number": None},
+                {"account_number": ""},
+            ]
+        },
+        {"username": 1, "account_number": 1},
+    ):
         username = user.get("username")
         if username:
             ensure_account_number(username)

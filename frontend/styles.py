@@ -3259,26 +3259,23 @@ def get_auth_waves_svg(view_width=1000, view_height=1000, is_panel=False) -> str
 _AUTH_ARTWORK_URI_CACHE = None
 
 
+_BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
 def get_auth_artwork_data_uri() -> str:
-    """Return base64 Data URI of the premium digital banking artwork (cached)."""
-    global _AUTH_ARTWORK_URI_CACHE
-    if _AUTH_ARTWORK_URI_CACHE is not None:
-        return _AUTH_ARTWORK_URI_CACHE
-    artwork_path = os.path.join(os.path.dirname(__file__), "assets", "banking_visual_artwork.jpg")
-    if os.path.exists(artwork_path):
-        try:
-            with open(artwork_path, "rb") as f:
-                b64 = base64.b64encode(f.read()).decode("utf-8")
-                _AUTH_ARTWORK_URI_CACHE = f"data:image/jpeg;base64,{b64}"
-                return _AUTH_ARTWORK_URI_CACHE
-        except Exception:
-            pass
-    return get_auth_waves_data_uri()
+    """Return static asset URL for high performance (avoids massive 660KB base64 payload)."""
+    static_file = os.path.join(_BASE_DIR, "static", "banking_visual_artwork.jpg")
+    if os.path.exists(static_file):
+        return "app/static/banking_visual_artwork.jpg"
+    return "app/static/auth_waves.svg"
 
 
 @lru_cache(maxsize=1)
 def get_auth_waves_data_uri() -> str:
-    """Return a base64 Data URI of the abstract flowing wave artwork SVG."""
+    """Return static asset URL or lightweight SVG fallback."""
+    static_file = os.path.join(_BASE_DIR, "static", "auth_waves.svg")
+    if os.path.exists(static_file):
+        return "app/static/auth_waves.svg"
     svg = get_auth_waves_svg(1200, 900)
     b64 = base64.b64encode(svg.encode("utf-8")).decode("utf-8")
     return f"data:image/svg+xml;base64,{b64}"
