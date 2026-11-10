@@ -143,8 +143,49 @@ def _ensure_index(
 
 
 # ---------------------------------------------------------------------------
-# Users
+# Users & Deduplication Routine
 # ---------------------------------------------------------------------------
+
+def cleanup_duplicate_users(collection=None):
+    """Find and remove duplicate customer records in users_collection.
+
+    If multiple documents share the same username:
+    - Retains the 'Active' account (or the most complete one with balance/account_number).
+    - Removes stale 'Pending Verification' duplicate documents.
+    """
+    target = collection if collection is not None else users_collection
+    try:
+        pipeline = [
+            {"$group": {"_id": "$username", "count": {"$sum": 1}, "docs": {"$push": "$$ROOT"}}},
+            {"$match": {"count": {"$gt": 1}}},
+        ]
+        duplicates = list(target.aggregate(pipeline))
+        for item in duplicates:
+            docs = item.get("docs", [])
+            if not docs or not item.get("_id"):
+                continue
+
+            def sort_key(d):
+                status_str = str(d.get("status", "")).lower()
+                is_active = 2 if status_str == "active" else 1 if status_str == "disabled" else 0
+                has_balance = 1 if float(d.get("balance", 0) or 0) > 0 else 0
+                has_acc = 1 if d.get("account_number") else 0
+                created = str(d.get("created_at") or "")
+                return (is_active, has_balance, has_acc, created)
+
+            docs.sort(key=sort_key, reverse=True)
+            keep_doc = docs[0]
+            keep_id = keep_doc.get("_id")
+
+            for dup in docs[1:]:
+                dup_id = dup.get("_id")
+                if dup_id and dup_id != keep_id:
+                    target.delete_one({"_id": dup_id})
+    except Exception:
+        pass
+
+
+cleanup_duplicate_users(users_collection)
 
 _ensure_index(
     users_collection,
@@ -152,6 +193,13 @@ _ensure_index(
     name="ux_users_account_number",
     unique=True,
     sparse=True,
+)
+
+_ensure_index(
+    users_collection,
+    [("username", 1)],
+    name="ux_users_username",
+    unique=True,
 )
 
 

@@ -111,6 +111,13 @@ def register_user(
     if not clean_name or not clean_username:
         return False
 
+    # Prevent duplicate registrations for existing usernames and emails
+    if users_collection.find_one({"username": clean_username}):
+        return False
+
+    if clean_email and users_collection.find_one({"email": clean_email}):
+        return False
+
     # This is authoritative backend validation; the Streamlit form is not
     # considered a security boundary. PasswordPolicyError is intentionally
     # allowed to propagate so the UI can report the real validation failure

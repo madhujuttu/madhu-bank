@@ -85,45 +85,74 @@ def admin_login(identifier, password):
     return False
 
 
-def get_all_accounts():
+def _deduplicate_accounts(accounts):
+    """Ensure account lists contain exactly one entry per username, prioritizing Active accounts."""
+    if not accounts:
+        return []
 
-    accounts = users_collection.find(
-        {},
-        {
-            "_id": 0,
-            "password": 0
-        }
+    sorted_accs = sorted(
+        accounts,
+        key=lambda a: (
+            2 if str(a.get("status", "")).lower() == "active" else 1 if str(a.get("status", "")).lower() == "disabled" else 0,
+            1 if float(a.get("balance", 0) or 0) > 0 else 0,
+            1 if a.get("account_number") else 0,
+            str(a.get("created_at") or ""),
+        ),
+        reverse=True,
     )
 
-    return list(accounts)
+    seen = set()
+    unique = []
+    for acc in sorted_accs:
+        uname = str(acc.get("username", "")).strip().lower()
+        if uname and uname in seen:
+            continue
+        if uname:
+            seen.add(uname)
+        unique.append(acc)
+
+    return unique
+
+
+def get_all_accounts():
+    accounts = list(
+        users_collection.find(
+            {},
+            {
+                "_id": 0,
+                "password": 0
+            }
+        )
+    )
+    return _deduplicate_accounts(accounts)
 
 
 def search_accounts(search_text):
-
-    accounts = users_collection.find(
-        {
-            "$or": [
-                {
-                    "username": {
-                        "$regex": search_text,
-                        "$options": "i"
+    accounts = list(
+        users_collection.find(
+            {
+                "$or": [
+                    {
+                        "username": {
+                            "$regex": search_text,
+                            "$options": "i"
+                        }
+                    },
+                    {
+                        "name": {
+                            "$regex": search_text,
+                            "$options": "i"
+                        }
                     }
-                },
-                {
-                    "name": {
-                        "$regex": search_text,
-                        "$options": "i"
-                    }
-                }
-            ]
-        },
-        {
-            "_id": 0,
-            "password": 0
-        }
+                ]
+            },
+            {
+                "_id": 0,
+                "password": 0
+            }
+        )
     )
-
-    return list(accounts)
+    return _deduplicate_accounts(accounts)
 
 
 def delete_account(username, account_number=None):
