@@ -9,3 +9,8 @@ font = "sans serif"
 [client]
 toolbarMode = "minimal"
 
+[server]
+headless = true
+enableStaticServing = true
+
+

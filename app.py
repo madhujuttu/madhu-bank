@@ -148,7 +148,7 @@ from backend.admin import (
 
 st.set_page_config(
     page_title="Madhu Bank",
-    page_icon=None,
+    page_icon="🏦",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -6413,7 +6413,7 @@ def admin_settings():
 
             admin_email_input = st.text_input(
                 "Admin Notification Email (SMTP)",
-                value=st.session_state.get("admin_alert_email", "madhumathib45@gmail.com"),
+                value=st.session_state.get("admin_alert_email", "admin@example.com"),
                 key="admin_alert_email_input",
                 help="Alert emails will be dispatched to this address via Gmail SMTP.",
             )

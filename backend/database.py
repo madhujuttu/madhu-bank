@@ -1,14 +1,23 @@
 """MongoDB connection and centralized index management for Madhu Bank."""
 
+import os
+from pathlib import Path
+from dotenv import load_dotenv
 from pymongo import MongoClient
 
+# Load environment configuration if available
+_BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(_BASE_DIR / ".env")
 
 # ---------------------------------------------------------------------------
 # Connection
 # ---------------------------------------------------------------------------
 
-client = MongoClient("mongodb://localhost:27017/")
-db = client["madhu_bank"]
+MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017/").strip()
+MONGODB_DB_NAME = os.getenv("MONGODB_DB_NAME", "madhu_bank").strip()
+
+client = MongoClient(MONGODB_URI)
+db = client[MONGODB_DB_NAME]
 
 
 # ---------------------------------------------------------------------------
