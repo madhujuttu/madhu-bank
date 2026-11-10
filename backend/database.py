@@ -1,6 +1,7 @@
 """MongoDB connection and centralized index management for Madhu Bank."""
 
 import os
+import urllib.parse
 from pathlib import Path
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -13,7 +14,22 @@ load_dotenv(_BASE_DIR / ".env")
 # Connection
 # ---------------------------------------------------------------------------
 
-MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017/").strip()
+def _sanitize_mongodb_uri(uri: str) -> str:
+    """Ensure username and password in MongoDB URI are safely percent-encoded as per RFC 3986."""
+    if not uri or "://" not in uri:
+        return uri
+    scheme, rest = uri.split("://", 1)
+    if "@" not in rest:
+        return uri
+    userpass, host_and_rest = rest.rsplit("@", 1)
+    if ":" in userpass:
+        user, pwd = userpass.split(":", 1)
+        escaped_user = urllib.parse.quote_plus(urllib.parse.unquote_plus(user))
+        escaped_pwd = urllib.parse.quote_plus(urllib.parse.unquote_plus(pwd))
+        return f"{scheme}://{escaped_user}:{escaped_pwd}@{host_and_rest}"
+    return uri
+
+MONGODB_URI = _sanitize_mongodb_uri(os.getenv("MONGODB_URI", "mongodb://localhost:27017/").strip())
 MONGODB_DB_NAME = os.getenv("MONGODB_DB_NAME", "madhu_bank").strip()
 
 client = MongoClient(MONGODB_URI)
